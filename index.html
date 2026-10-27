@@ -583,6 +583,8 @@ const SERVICES = [
   {vi:['Phim kiến trúc','Animation và walkthrough thời gian thực với Unreal Engine 5 — phục vụ bán hàng và trình bày.'], en:['Architectural film','Animation and real-time walkthroughs in Unreal Engine 5 for sales and presentation.']},
   {vi:['Hồ sơ & giám sát tác giả','Hồ sơ trình bày thuyết phục và đồng hành giám sát để công trình thi công đúng thiết kế.'], en:['Presentation & supervision','Persuasive presentation sets and author supervision so the build stays true to design.']}
 ];
+const DIMS = {"tm-01.webp":[1400,872],"tm-02.webp":[1400,2100],"tm-03.webp":[1400,1474],"tm-04.webp":[1400,1739],"tm-05.webp":[1400,2100],"tm-06.webp":[1400,1015],"tm-07.webp":[1400,1361],"tm-08.webp":[1400,840],"tm-09.webp":[1400,840],"tm-10.webp":[1400,934],"tm-11.webp":[1400,1868],"tm-12.webp":[1400,1903],"tm-13.webp":[1400,934],"tm-14.webp":[1400,584],"tm-15.webp":[1400,934],"tm-16.webp":[1400,700],"tm-17.webp":[1400,747],"tm-18.webp":[1400,1050],"tm-19.webp":[1400,1556],"tm-20.webp":[790,1000],"tm-21.webp":[1400,677],"tm-22.webp":[1400,942],"tm-23.webp":[1400,1050],"tm-24.webp":[1400,662],"tm-25.webp":[1400,1867],"tm-26.webp":[1400,989],"tm-27.webp":[1400,989],"tm-28.webp":[1400,1400],"tm-29.webp":[1400,1680],"tm-30.webp":[1400,789],"tm-31.webp":[1400,882],"tm-32.webp":[1400,1818],"tm-33.webp":[1400,1628],"tm-34.webp":[1400,700],"tm-35.webp":[1400,788],"tm-36.jpg":[1200,781],"tm-37.webp":[1400,788],"tm-38.webp":[1400,788],"tm-39.jpg":[1200,781],"tm-40.webp":[1200,901],"tm-41.jpg":[1200,800],"tm-42.jpg":[1200,532],"tm-43.webp":[1400,933],"tm-44.webp":[1400,788],"tm-45.webp":[1400,788],"tm-46.webp":[1400,911],"tm-47.webp":[1400,788],"tm-48.webp":[1400,934],"tm-49.webp":[1400,1400],"tm-50.webp":[1400,1273],"tm-51.webp":[1400,1270],"tm-52.webp":[1400,2208],"tm-53.webp":[1400,1750],"tm-54.jpg":[1200,847],"tm-55.webp":[1400,2115],"tm-56.webp":[1400,991],"tm-57.webp":[1400,1740],"tm-58.webp":[1400,1896],"tm-59.webp":[1400,1400],"tm-60.webp":[1400,991],"tm-61.webp":[1400,788],"tm-62.webp":[1400,788],"tm-63.webp":[1400,788],"in-01.webp":[1400,933],"in-02.webp":[1400,1750],"in-03.webp":[1400,1750],"in-04.webp":[1400,1750],"in-05.webp":[1400,1050],"in-06.webp":[1400,1050],"in-07.webp":[1400,1736],"in-08.webp":[1400,1166],"in-09.webp":[1400,1166],"in-10.webp":[1400,1166],"in-11.webp":[1000,667],"in-12.webp":[1008,982],"in-13.webp":[973,984],"in-14.webp":[1008,983],"in-15.webp":[975,984]};
+const wh = src => { const d = DIMS[src.split('/').pop()] || [4,3]; return `width="${d[0]}" height="${d[1]}" style="aspect-ratio:${d[0]}/${d[1]}"`; };
 const CLIENTS = ['Highlands Coffee','Arashiyama','Kokugyu','Tohoku','Mako','King BBQ','Jito Beer Garden','Bean Garden','Vạn Phát Coffee','Berry Kids Cafe','Lẩu Bò Nhà Gỗ','Sushi Cô Chủ Nhỏ'];
 
 /* ================= HELPERS ================= */
@@ -629,11 +631,11 @@ function renderList(){
   $('#icount').textContent = `(${String(n).padStart(2,'0')})`;
 }
 function renderStrip(){
-  $('#strip').innerHTML = INTERIOR.map((s,i)=>`<figure data-i="${i}"><img src="${s}" alt="Interior ${i+1}" loading="lazy" decoding="async" draggable="false"><figcaption>${String(i+1).padStart(2,'0')} / ${INTERIOR.length}</figcaption></figure>`).join('');
+  $('#strip').innerHTML = INTERIOR.map((s,i)=>`<figure data-i="${i}"><img src="${s}" ${wh(s)} alt="Interior ${i+1}" loading="lazy" decoding="async" draggable="false"><figcaption>${String(i+1).padStart(2,'0')} / ${INTERIOR.length}</figcaption></figure>`).join('');
 }
 let vizShown = 24;
 function renderViz(){
-  $('#masonry').innerHTML = VIZ.map((s,i)=>`<figure class="${i>=vizShown?'hidden':''}" data-i="${i}"><div class="ri"><img src="${s}" alt="Visualization ${i+1}" loading="lazy" decoding="async"></div></figure>`).join('');
+  $('#masonry').innerHTML = VIZ.map((s,i)=>`<figure class="${i>=vizShown?'hidden':''}" data-i="${i}"><div class="ri"><img src="${s}" ${wh(s)} alt="Visualization ${i+1}" loading="lazy" decoding="async"></div></figure>`).join('');
   updateMore();
 }
 function updateMore(){
