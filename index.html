@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monoté Studio — Architecture · Interior · Visualization</title>
+<meta name="description" content="Monoté Studio — kiến trúc, nội thất và diễn họa 3D. F&B, nhà ở, sân vườn và phim diễn họa kiến trúc.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2EEE6; --bg2:#E8E2D7; --ink:#171615; --mute:#7C756B; --line:rgba(23,22,21,.14);
+  --accent:#A0522D; --dark:#0F0E0D; --dink:#ECE7DE; --dmute:#8E877C; --dline:rgba(236,231,222,.14);
+  --serif:'Cormorant Garamond',Georgia,serif; --sans:'Be Vietnam Pro',system-ui,-apple-system,Segoe UI,sans-serif;
+  --pad:clamp(16px,4vw,56px); --ease:cubic-bezier(.22,.61,.36,1); --ease2:cubic-bezier(.77,0,.18,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;font-size:15px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body.lock{overflow:hidden}
+img,video{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+::selection{background:var(--ink);color:var(--bg)}
+.label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:400}
+.caps{font-family:var(--serif);text-transform:uppercase;letter-spacing:.22em;font-weight:400}
+.wrap{padding:0 var(--pad)}
+.muted{color:var(--mute)}
+
+/* ---------- preloader ---------- */
+#loader{position:fixed;inset:0;z-index:200;background:var(--dark);display:grid;place-items:center;transition:transform 1.1s var(--ease2) .1s}
+#loader.done{transform:translateY(-100%)}
+#loader .mask{font-family:var(--serif);font-weight:500;font-size:clamp(84px,22vw,320px);line-height:.85;letter-spacing:-.02em;
+  background:url(assets/img/team/tm-63.webp) center/cover;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:pan 2.4s var(--ease) forwards}
+#loader .count{position:absolute;left:var(--pad);bottom:var(--pad);color:var(--dink);font-size:11px;letter-spacing:.2em}
+#loader .tag{position:absolute;right:var(--pad);bottom:var(--pad);color:var(--dmute);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+@keyframes pan{from{background-position:30% 40%;opacity:0;transform:scale(1.04)}to{background-position:60% 55%;opacity:1;transform:none}}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:22px var(--pad);
+  color:#fff;mix-blend-mode:difference;transition:transform .5s var(--ease)}
+.nav.hide{transform:translateY(-110%)}
+.nav .l,.nav .r{display:flex;gap:28px;align-items:center}
+.nav .r{justify-content:flex-end}
+.nav a.lk{position:relative}
+.nav a.lk::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .45s var(--ease)}
+.nav a.lk:hover::after{transform:scaleX(1);transform-origin:left}
+.logo{font-family:var(--serif);font-size:26px;font-weight:500;letter-spacing:.02em;line-height:1}
+.logo i{font-style:italic;font-weight:300}
+.lang{display:flex;gap:6px;font-size:11px;letter-spacing:.16em}
+.lang button{opacity:.45;transition:opacity .3s}
+.lang button.on{opacity:1}
+.menu-btn{display:none}
+#mnav{position:fixed;inset:0;z-index:49;background:var(--dark);color:var(--dink);display:flex;flex-direction:column;justify-content:center;padding:var(--pad);gap:6px;
+  clip-path:inset(0 0 100% 0);transition:clip-path .8s var(--ease2)}
+#mnav.open{clip-path:inset(0 0 0 0)}
+#mnav a{font-family:var(--serif);font-size:44px;line-height:1.15}
+
+/* ---------- hero ---------- */
+.hero{position:relative;height:100svh;min-height:560px;overflow:hidden;background:var(--dark);color:#fff}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.06);transition:transform 2.6s var(--ease)}
+body.ready .hero video{transform:scale(1)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
+.hero .in{position:absolute;inset:auto 0 0 0;z-index:2;padding:0 var(--pad) clamp(28px,5vh,56px)}
+.hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(46px,8.6vw,148px);line-height:.95;letter-spacing:-.015em;max-width:15ch}
+.hero h1 em{font-style:italic}
+.hero h1 .ln{display:block;overflow:hidden}
+.hero h1 .ln>span{display:block;transform:translateY(105%);transition:transform 1.3s var(--ease)}
+body.ready .hero h1 .ln>span{transform:none}
+body.ready .hero h1 .ln:nth-child(2)>span{transition-delay:.12s}
+.hero .row{margin-top:clamp(22px,4vh,40px);display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;
+  border-top:1px solid rgba(255,255,255,.28);padding-top:18px;opacity:0;transition:opacity 1.2s var(--ease) .5s}
+body.ready .hero .row{opacity:1}
+.hero .disc{display:flex;gap:28px;flex-wrap:wrap}
+.play{display:inline-flex;align-items:center;gap:14px}
+.play .c{width:46px;height:46px;border:1px solid rgba(255,255,255,.6);border-radius:50%;display:grid;place-items:center;transition:background .4s,transform .4s var(--ease)}
+.play:hover .c{background:#fff;color:#000;transform:scale(1.08)}
+.play svg{width:12px;height:12px;margin-left:2px}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(28px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.ri{overflow:hidden;position:relative;background:var(--bg2)}
+.ri img{width:100%;height:100%;object-fit:cover;transform:scale(1.12);transition:transform 1.6s var(--ease),opacity .8s;opacity:0}
+.ri.in img{transform:scale(1);opacity:1}
+.ri::after{content:"";position:absolute;inset:0;background:var(--bg);transform-origin:top;transition:transform 1.2s var(--ease2)}
+.ri.in::after{transform:scaleY(0)}
+
+/* ---------- section heads ---------- */
+section{position:relative}
+.sh{display:flex;justify-content:space-between;align-items:baseline;gap:20px;border-top:1px solid var(--line);padding-top:16px;margin-bottom:clamp(36px,6vw,80px)}
+.sh h2{font-family:var(--serif);font-weight:300;font-size:clamp(38px,6vw,92px);line-height:1;letter-spacing:-.01em}
+.sh h2 em{font-style:italic}
+.sh .side{display:flex;gap:32px;align-items:baseline}
+.dark .sh{border-color:var(--dline)}
+
+/* ---------- statement ---------- */
+.statement{padding:clamp(90px,14vw,200px) var(--pad) clamp(70px,10vw,140px)}
+.statement .k{display:grid;grid-template-columns:1fr 3fr;gap:40px}
+.statement p.big{font-family:var(--serif);font-weight:300;font-size:clamp(28px,3.7vw,58px);line-height:1.18;letter-spacing:-.005em}
+.statement p.big .w{color:rgba(23,22,21,.16);transition:color .5s}
+.statement p.big .w.on{color:var(--ink)}
+.stats{margin-top:clamp(60px,9vw,120px);display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.stats div{padding:22px 20px 0 0}
+.stats b{display:block;font-family:var(--serif);font-weight:300;font-size:clamp(44px,5.6vw,86px);line-height:1}
+.stats b sup{font-size:.4em;vertical-align:top;margin-left:2px}
+
+/* ---------- marquee ---------- */
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:20px 0;white-space:nowrap}
+.marquee .t{display:inline-flex;gap:56px;animation:mq 46s linear infinite;padding-right:56px}
+.marquee span{font-family:var(--serif);font-size:clamp(22px,2.4vw,34px);font-style:italic;font-weight:300}
+.marquee span.d{font-style:normal;color:var(--accent)}
+@keyframes mq{to{transform:translateX(-100%)}}
+
+/* ---------- selected works ---------- */
+.works{padding:clamp(80px,12vw,170px) var(--pad) clamp(60px,8vw,120px)}
+.mosaic{display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(14px,2vw,28px);row-gap:clamp(56px,8vw,120px)}
+.card{cursor:pointer}
+.card .ri{aspect-ratio:var(--ar,4/3)}
+.card .ri img{transition:transform 1.6s var(--ease),opacity .8s,filter .6s}
+.card:hover .ri.in img{transform:scale(1.035)}
+.card .cap{display:flex;justify-content:space-between;gap:16px;margin-top:16px;align-items:flex-start}
+.card .cap h3{font-family:var(--serif);font-weight:400;font-size:clamp(15px,1.3vw,19px);text-transform:uppercase;letter-spacing:.24em;line-height:1.35}
+.card .cap .n{font-size:11px;letter-spacing:.16em;color:var(--mute);min-width:34px}
+.card .cap .m{color:var(--mute);font-size:13px;margin-top:4px}
+.card .arrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;opacity:.0;transform:translateX(-8px);transition:.5s var(--ease)}
+.card:hover .arrow{opacity:1;transform:none}
+.c-a{grid-column:1/-1;--ar:21/9}
+.c-b{grid-column:1/8;--ar:4/3}
+.c-c{grid-column:9/-1;--ar:4/5;margin-top:clamp(40px,10vw,160px)}
+.c-d{grid-column:1/6;--ar:4/5}
+.c-e{grid-column:7/-1;--ar:4/3;margin-top:clamp(60px,12vw,200px)}
+.c-f{grid-column:3/11;--ar:16/9}
+
+/* ---------- index ---------- */
+.index{padding:clamp(60px,9vw,130px) var(--pad)}
+.filters{display:flex;gap:26px;flex-wrap:wrap;margin-bottom:28px}
+.filters button{font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:6px 0;position:relative;color:var(--mute);transition:color .3s}
+.filters button sup{font-size:9px;margin-left:3px}
+.filters button.on{color:var(--ink)}
+.filters button::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--ink);transform:scaleX(0);transition:transform .45s var(--ease)}
+.filters button.on::after{transform:scaleX(1)}
+.ihead,.irow{display:grid;grid-template-columns:56px 2.3fr 1fr 1.3fr .7fr 40px;gap:16px;align-items:center}
+.ihead{padding:10px 0;border-bottom:1px solid var(--ink);color:var(--mute)}
+.irow{padding:20px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:padding .5s var(--ease),color .3s}
+.irow .nm{font-family:var(--serif);font-size:clamp(20px,2.1vw,30px);font-weight:400;line-height:1.15}
+.irow .sm{font-size:13px;color:var(--mute)}
+.irow .ar{text-align:right;transition:transform .5s var(--ease)}
+.irow:hover{padding-left:14px}
+.irow:hover .ar{transform:translateX(-6px) rotate(-45deg)}
+.list.dim .irow{color:rgba(23,22,21,.35)}
+.list.dim .irow:hover{color:var(--ink)}
+.irow.gone{display:none}
+#peek{position:fixed;left:0;top:0;width:min(30vw,420px);aspect-ratio:4/3;pointer-events:none;z-index:40;overflow:hidden;opacity:0;transform:translate(-50%,-50%) scale(.85);
+  transition:opacity .35s var(--ease),transform .35s var(--ease);will-change:left,top}
+#peek.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#peek img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+
+/* ---------- showreel (dark) ---------- */
+.dark{background:var(--dark);color:var(--dink)}
+.dark .muted{color:var(--dmute)}
+.reels{padding:clamp(80px,11vw,160px) var(--pad)}
+.reel-grid{display:grid;grid-template-columns:2.35fr 1fr;gap:clamp(14px,2vw,28px);align-items:end}
+.vcard{cursor:pointer;position:relative}
+.vcard .vb{position:relative;overflow:hidden;background:#000}
+.vcard video{width:100%;height:100%;object-fit:cover;transition:transform 1.4s var(--ease),opacity .6s}
+.vcard:hover video{transform:scale(1.03)}
+.vcard .pl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:84px;height:84px;border-radius:50%;border:1px solid rgba(255,255,255,.55);
+  display:grid;place-items:center;color:#fff;font-size:10px;letter-spacing:.18em;backdrop-filter:blur(6px);background:rgba(0,0,0,.15);transition:.5s var(--ease)}
+.vcard:hover .pl{width:96px;height:96px;background:rgba(255,255,255,.92);color:#000}
+.vcard .cap{display:flex;justify-content:space-between;gap:14px;margin-top:16px;border-top:1px solid var(--dline);padding-top:14px}
+.vcard h3{font-family:var(--serif);font-weight:400;text-transform:uppercase;letter-spacing:.22em;font-size:clamp(15px,1.3vw,19px)}
+.v-wide .vb{aspect-ratio:1920/842}
+.v-tall .vb{aspect-ratio:9/16}
+.dark .lead{max-width:56ch;margin:-30px 0 clamp(40px,6vw,80px);color:var(--dmute)}
+
+/* ---------- interior strip ---------- */
+.interior{padding:clamp(80px,11vw,160px) 0 clamp(60px,8vw,110px)}
+.interior .sh,.interior .intro{margin-left:var(--pad);margin-right:var(--pad)}
+.intro{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:clamp(30px,4vw,56px)}
+.intro p{max-width:52ch}
+.strip{display:flex;gap:clamp(10px,1.2vw,18px);overflow-x:auto;scroll-snap-type:x mandatory;padding:0 var(--pad) 20px;scrollbar-width:none;cursor:grab}
+.strip::-webkit-scrollbar{display:none}
+.strip.drag{cursor:grabbing;scroll-snap-type:none}
+.strip figure{flex:0 0 auto;height:min(72vh,720px);scroll-snap-align:start;position:relative;overflow:hidden;background:var(--bg2)}
+.strip img{height:100%;width:auto;object-fit:cover;transition:transform 1.4s var(--ease);user-select:none;-webkit-user-drag:none}
+.strip figure:hover img{transform:scale(1.03)}
+.strip figcaption{position:absolute;left:14px;bottom:12px;color:#fff;font-size:11px;letter-spacing:.16em;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.strip-ctl{display:flex;justify-content:space-between;align-items:center;padding:14px var(--pad) 0}
+.strip-ctl .bar{flex:1;height:1px;background:var(--line);margin:0 24px;position:relative}
+.strip-ctl .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--ink);width:20%}
+.strip-ctl .btns{display:flex;gap:10px}
+.rbtn{width:44px;height:44px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;transition:background .3s,color .3s,border-color .3s}
+.rbtn:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* ---------- visualization masonry ---------- */
+.viz{padding:clamp(80px,11vw,160px) var(--pad)}
+.masonry{columns:3;column-gap:10px}
+.masonry figure{break-inside:avoid;margin-bottom:10px;cursor:zoom-in;position:relative;overflow:hidden}
+.masonry figure .ri{background:var(--bg2)}
+.masonry figure.hidden{display:none}
+.masonry img{width:100%;height:auto}
+.masonry figure:hover .ri.in img{transform:scale(1.03)}
+.more{display:flex;justify-content:center;margin-top:48px}
+.pill{display:inline-flex;align-items:center;gap:12px;border:1px solid var(--ink);border-radius:100px;padding:14px 28px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;transition:background .35s,color .35s}
+.pill:hover{background:var(--ink);color:var(--bg)}
+.dark .pill{border-color:var(--dink)}
+.dark .pill:hover{background:var(--dink);color:var(--dark)}
+
+/* ---------- services ---------- */
+.services{padding:clamp(80px,11vw,160px) var(--pad)}
+.srow{display:grid;grid-template-columns:70px 1.5fr 1fr;gap:20px;align-items:baseline;border-bottom:1px solid var(--line);padding:clamp(18px,2.4vw,30px) 0}
+.srow:first-of-type{border-top:1px solid var(--line)}
+.srow h3{font-family:var(--serif);font-weight:300;font-size:clamp(28px,4.2vw,64px);line-height:1.05;transition:transform .6s var(--ease),font-style .3s}
+.srow:hover h3{transform:translateX(12px);font-style:italic}
+.srow p{color:var(--mute);max-width:44ch}
+
+/* ---------- studio ---------- */
+.studio{padding:clamp(80px,11vw,160px) var(--pad)}
+.sgrid{display:grid;grid-template-columns:5fr 6fr;gap:clamp(30px,6vw,110px);align-items:start}
+.sgrid .ri{aspect-ratio:4/5}
+.sgrid blockquote{font-family:var(--serif);font-weight:300;font-size:clamp(26px,3vw,44px);line-height:1.2;margin-bottom:36px}
+.sgrid blockquote em{font-style:italic}
+.sgrid .sig{display:flex;gap:16px;align-items:center;margin-bottom:48px}
+.sgrid .sig b{font-family:var(--serif);font-weight:400;font-size:22px;letter-spacing:.2em;text-transform:uppercase}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:28px 32px;border-top:1px solid var(--line);padding-top:26px}
+.facts .label{color:var(--mute);margin-bottom:8px}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tags span{border:1px solid var(--line);border-radius:100px;padding:5px 13px;font-size:12px}
+
+/* ---------- contact ---------- */
+.contact{padding:clamp(100px,14vw,200px) var(--pad) 40px;overflow:hidden}
+.contact h2{font-family:var(--serif);font-weight:300;font-size:clamp(52px,10.5vw,190px);line-height:.92;letter-spacing:-.02em}
+.contact h2 em{font-style:italic;color:var(--accent)}
+.cgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:clamp(50px,8vw,110px);border-top:1px solid var(--dline);padding-top:24px}
+.cgrid a.big{font-family:var(--serif);font-size:clamp(22px,2.2vw,32px);display:inline-block;margin-top:8px;border-bottom:1px solid transparent;transition:border-color .3s}
+.cgrid a.big:hover{border-color:currentColor}
+.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:clamp(70px,10vw,140px);color:var(--dmute)}
+.giant{font-family:var(--serif);font-weight:500;font-size:clamp(90px,27vw,460px);line-height:.8;letter-spacing:-.04em;margin-top:30px;color:#1d1b19;white-space:nowrap;user-select:none}
+.giant i{font-weight:300}
+
+/* ---------- viewer ---------- */
+#viewer{position:fixed;inset:0;z-index:120;background:rgba(12,11,10,.97);color:var(--dink);display:grid;grid-template-rows:auto 1fr auto;opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+#viewer.open{opacity:1;pointer-events:auto}
+#viewer .top,#viewer .bot{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px var(--pad)}
+#viewer .stage{position:relative;display:grid;place-items:center;min-height:0;padding:0 clamp(56px,7vw,110px)}
+#viewer .stage{overflow:hidden}
+#viewer .stage img{max-width:100%;max-height:calc(100svh - 210px);object-fit:contain;opacity:0;transform:scale(.985);transition:opacity .5s var(--ease),transform .7s var(--ease)}
+#viewer .stage img.on{opacity:1;transform:none}
+#viewer .nav-b{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border:1px solid var(--dline);border-radius:50%;display:grid;place-items:center;transition:background .3s,color .3s}
+#viewer .nav-b:hover{background:var(--dink);color:var(--dark)}
+#viewer .prev{left:clamp(8px,2vw,32px)} #viewer .next{right:clamp(8px,2vw,32px)}
+#viewer .meta h4{font-family:var(--serif);font-weight:400;text-transform:uppercase;letter-spacing:.22em;font-size:16px}
+#viewer .meta p{color:var(--dmute);font-size:13px}
+#viewer .desc{max-width:62ch;color:var(--dmute);font-size:13px}
+#viewer .thumbs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;max-width:60vw}
+#viewer .thumbs button{flex:0 0 auto;width:64px;height:42px;opacity:.35;transition:opacity .3s;overflow:hidden}
+#viewer .thumbs button.on,#viewer .thumbs button:hover{opacity:1}
+#viewer .thumbs img{width:100%;height:100%;object-fit:cover}
+.x{display:inline-flex;align-items:center;gap:10px}
+.x i{width:22px;height:22px;position:relative;display:inline-block}
+.x i::before,.x i::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:currentColor;transform:rotate(45deg)}
+.x i::after{transform:rotate(-45deg)}
+
+#vmodal{position:fixed;inset:0;z-index:130;background:#000;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+#vmodal.open{opacity:1;pointer-events:auto}
+#vmodal video{max-width:100vw;max-height:100svh;width:auto;height:auto}
+#vmodal .x{position:absolute;top:18px;right:var(--pad);color:#fff;z-index:2}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .nav{grid-template-columns:1fr auto}
+  .nav .l{display:none}
+  .nav .r a.lk{display:none}
+  .menu-btn{display:inline}
+  .statement .k,.intro,.sgrid{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .stats div{padding-bottom:20px}
+  .mosaic{row-gap:56px}
+  .c-a,.c-b,.c-c,.c-d,.c-e,.c-f{grid-column:1/-1;margin-top:0}
+  .c-a{--ar:4/3}
+  .ihead{display:none}
+  .irow{grid-template-columns:36px 1fr 28px;row-gap:2px}
+  .irow .loc,.irow .area{grid-column:2;font-size:13px}
+  .irow .cat{display:none}
+  .irow .ar{grid-row:1;grid-column:3}
+  .irow .area{margin-top:-2px}
+  .reel-grid{grid-template-columns:1fr}
+  .v-tall{max-width:360px}
+  .masonry{columns:2;column-gap:6px}
+  .masonry figure{margin-bottom:6px}
+  .srow{grid-template-columns:40px 1fr}
+  .srow p{grid-column:2}
+  .cgrid{grid-template-columns:1fr 1fr}
+  #peek{display:none}
+  #viewer .stage{padding:0 8px}
+  #viewer .nav-b{display:none}
+  #viewer .thumbs{max-width:100%}
+  #viewer .bot{flex-direction:column;align-items:flex-start}
+  .card .arrow{opacity:1;transform:none}
+}
+@media (max-width:520px){
+  #loader .tag{display:none}
+  .irow .empty{display:none}
+  .cgrid{grid-template-columns:1fr}
+  .hero .disc{gap:16px}
+  .sh .side .hide-s{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rv,.ri img{opacity:1;transform:none}
+  .ri::after{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="loader" aria-hidden="true">
+  <div class="mask">Monoté</div>
+  <div class="count"><span id="pct">0</span> %</div>
+  <div class="tag">Architecture · Interior · Visualization</div>
+</div>
+
+<header class="nav" id="nav">
+  <nav class="l label">
+    <a class="lk" href="#works" data-en="Works">Dự án</a>
+    <a class="lk" href="#index" data-en="Index">Danh mục</a>
+    <a class="lk" href="#reels">Showreel</a>
+  </nav>
+  <a href="#top" class="logo">Monoté <i>Studio</i></a>
+  <div class="r label">
+    <a class="lk" href="#studio">Studio</a>
+    <a class="lk" href="#contact" data-en="Contact">Liên hệ</a>
+    <div class="lang"><button data-l="vi" class="on">VI</button><span>/</span><button data-l="en">EN</button></div>
+    <button class="menu-btn label" id="menuBtn">Menu</button>
+  </div>
+</header>
+<div id="mnav">
+  <a href="#works" data-en="Works">Dự án</a>
+  <a href="#index" data-en="Index">Danh mục</a>
+  <a href="#reels">Showreel</a>
+  <a href="#interior" data-en="Interior">Nội thất</a>
+  <a href="#viz" data-en="Visualization">Diễn họa</a>
+  <a href="#studio">Studio</a>
+  <a href="#contact" data-en="Contact">Liên hệ</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <video id="heroVid" src="assets/video/hero-loop.mp4" poster="assets/video/hero-poster.jpg" autoplay muted loop playsinline preload="auto"></video>
+  <div class="in">
+    <h1>
+      <span class="ln"><span data-en="Spaces, told">Không gian,</span></span>
+      <span class="ln"><span><em data-en="in light.">kể bằng ánh sáng.</em></span></span>
+    </h1>
+    <div class="row">
+      <div class="disc label">
+        <span data-en="Architecture">Kiến trúc</span><span data-en="Interior">Nội thất</span><span data-en="3D Visualization">Diễn họa 3D</span><span data-en="Animation">Phim kiến trúc</span>
+      </div>
+      <button class="play label" data-video="assets/video/green-garden.mp4">
+        <span data-en="Watch showreel">Xem showreel</span>
+        <span class="c"><svg viewBox="0 0 10 12"><path d="M0 0l10 6-10 6z" fill="currentColor"/></svg></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- STATEMENT -->
+<section class="statement" id="about">
+  <div class="k">
+    <div class="label muted rv" data-en="(About the studio)">(Về chúng tôi)</div>
+    <div>
+      <p class="big" id="stmt" data-en="Architecture came to us by fortune. We practise a human-first architecture — concept, function, aesthetics and every last detail are shaped for the people who will live, eat and gather in them, refined as far as we can take it.">Đến với kiến trúc là một cái duyên rất đẹp. Chúng tôi theo đuổi lối kiến trúc “vị nhân sinh” — vì con người mà làm: từ khái niệm, công năng, thẩm mỹ đến từng chi tiết, tất cả đều hướng tới sự hoàn thiện nhất có thể.</p>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="rv"><b data-n="25">0<sup>+</sup></b><span class="label muted" data-en="Projects designed">Dự án đã thiết kế</span></div>
+    <div class="rv"><b data-n="13000">0<sup>m²</sup></b><span class="label muted" data-en="F&B & residential area">Diện tích F&B & nhà ở</span></div>
+    <div class="rv"><b data-n="140">0<sup>+</sup></b><span class="label muted" data-en="Rendered images">Phối cảnh diễn họa</span></div>
+    <div class="rv"><b data-n="10">0<sup>+</sup></b><span class="label muted" data-en="Provinces & cities">Tỉnh thành</span></div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="t" id="mq"></div><div class="t" id="mq2"></div></div>
+
+<!-- SELECTED WORKS -->
+<section class="works" id="works">
+  <div class="sh rv">
+    <h2 data-en="Selected <em>works</em>">Dự án <em>tiêu biểu</em></h2>
+    <div class="side label muted"><span class="hide-s">2020 — 2026</span><span>(06)</span></div>
+  </div>
+  <div class="mosaic" id="mosaic"></div>
+</section>
+
+<!-- SHOWREEL -->
+<section class="reels dark" id="reels">
+  <div class="sh rv">
+    <h2>Showreel <em data-en="& films">& phim</em></h2>
+    <div class="side label muted"><span>(02)</span></div>
+  </div>
+  <p class="lead rv" data-en="Architectural animation tells what a still image cannot — light shifting across a garden, the rhythm of walking through a room. Hover to preview, click to watch with sound.">Phim diễn họa kể điều mà ảnh tĩnh không nói hết — ánh sáng chuyển động trong khu vườn, nhịp bước đi qua một căn phòng. Rê chuột để xem trước, bấm để xem kèm âm thanh.</p>
+  <div class="reel-grid">
+    <div class="vcard v-wide rv" data-video="assets/video/green-garden.mp4">
+      <div class="vb"><video src="assets/video/green-garden.mp4#t=12" poster="assets/video/green-garden.jpg" muted loop playsinline preload="none"></video><span class="pl label" data-en="Play">Xem</span></div>
+      <div class="cap"><div><h3>Green Garden</h3><div class="muted label" style="margin-top:6px" data-en="Cinematic landscape animation">Phim diễn họa cảnh quan</div></div><span class="label muted">1:18 · 2K</span></div>
+    </div>
+    <div class="vcard v-tall rv" data-video="assets/video/ue5-living-kitchen.mp4">
+      <div class="vb"><video src="assets/video/ue5-living-kitchen.mp4" poster="assets/video/ue5-living-kitchen.jpg" muted loop playsinline preload="none"></video><span class="pl label" data-en="Play">Xem</span></div>
+      <div class="cap"><div><h3 data-en="Living · Kitchen">Living · Kitchen</h3><div class="muted label" style="margin-top:6px">Unreal Engine 5 · Lumen</div></div><span class="label muted">0:41 · 9:16</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- INDEX -->
+<section class="index" id="index">
+  <div class="sh rv">
+    <h2 data-en="Project <em>index</em>">Danh mục <em>dự án</em></h2>
+    <div class="side label muted"><span id="icount"></span></div>
+  </div>
+  <div class="filters rv" id="filters"></div>
+  <div class="ihead label rv"><span>No.</span><span data-en="Project">Dự án</span><span data-en="Type">Loại hình</span><span data-en="Location">Địa điểm</span><span data-en="Area">Diện tích</span><span></span></div>
+  <div class="list" id="list"></div>
+</section>
+<div id="peek"><img alt=""><img alt=""></div>
+
+<!-- INTERIOR -->
+<section class="interior" id="interior">
+  <div class="sh rv">
+    <h2 data-en="Interior <em>design</em>">Thiết kế <em>nội thất</em></h2>
+    <div class="side label muted"><span>3ds Max · Corona</span><span>(15)</span></div>
+  </div>
+  <div class="intro rv">
+    <p class="label muted" data-en="(Residential interiors)">(Nội thất nhà ở)</p>
+    <p data-en="Bedrooms, bathrooms and walk-in suites in a calm palette of oak, stone and linen — warm light, honest materials and details resolved down to the joinery.">Phòng ngủ, phòng tắm và walk-in trong bảng màu trầm của gỗ sồi, đá và vải lanh — ánh sáng ấm, vật liệu chân thật và chi tiết được giải quyết tới từng mối nối.</p>
+  </div>
+  <div class="strip" id="strip"></div>
+  <div class="strip-ctl">
+    <span class="label muted" data-en="Drag to explore">Kéo để xem</span>
+    <div class="bar"><i id="sbar"></i></div>
+    <div class="btns"><button class="rbtn" id="sPrev" aria-label="Previous">←</button><button class="rbtn" id="sNext" aria-label="Next">→</button></div>
+  </div>
+</section>
+
+<!-- VISUALIZATION -->
+<section class="viz" id="viz">
+  <div class="sh rv">
+    <h2 data-en="Architectural <em>visualization</em>">Diễn họa <em>kiến trúc</em></h2>
+    <div class="side label muted"><span class="hide-s" data-en="Domestic & international">Trong & ngoài nước</span><span>(62)</span></div>
+  </div>
+  <div class="intro rv" style="margin-bottom:clamp(30px,4vw,56px)">
+    <p class="label muted" data-en="(Our team's projects)">(Dự án của đội ngũ)</p>
+    <p data-en="With a team of architects, interior designers and 3D artists, we deliver spatial design and visual storytelling for developers and architecture firms at home and abroad — from towers and masterplans to mid-rise housing and landscape.">Với đội ngũ kiến trúc sư, nhà thiết kế nội thất và họa sĩ 3D, chúng tôi thực hiện diễn họa cho chủ đầu tư và văn phòng kiến trúc trong và ngoài nước — từ cao ốc, quy hoạch đến nhà ở thấp tầng và cảnh quan.</p>
+  </div>
+  <div class="masonry" id="masonry"></div>
+  <div class="more"><button class="pill" id="moreBtn"><span data-en="Show more">Xem thêm</span> <span id="moreN"></span></button></div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="sh rv">
+    <h2 data-en="What we <em>do</em>">Chúng tôi <em>làm gì</em></h2>
+    <div class="side label muted"><span>(05)</span></div>
+  </div>
+  <div id="srows"></div>
+</section>
+
+<!-- STUDIO -->
+<section class="studio" id="studio">
+  <div class="sh rv">
+    <h2>Studio</h2>
+    <div class="side label muted"><span>Monoté</span></div>
+  </div>
+  <div class="sgrid">
+    <div class="ri rv"><img src="assets/img/fnb/p05-2.webp" alt="Tohoku Japanese Restaurant" loading="lazy"></div>
+    <div>
+      <blockquote class="rv" data-en="“Every project — residential, F&B or artistic — is a rare chance to learn. We want each concept, each function and each detail to reach <em>the most complete version</em> of itself.”">“Mỗi dự án — dân dụng, F&B hay nghệ thuật — là một cơ hội quý để học hỏi. Chúng tôi mong từng khái niệm, công năng và chi tiết đều chạm tới <em>sự hoàn thiện nhất</em> có thể.”</blockquote>
+      <div class="sig rv"><b>Monoté Studio</b></div>
+      <div class="facts rv">
+        <div><div class="label" data-en="Disciplines">Lĩnh vực</div><div data-en="Architecture, F&B interior, residential, landscape, 3D visualization & animation">Kiến trúc, nội thất F&B, nhà ở, cảnh quan, diễn họa & phim 3D</div></div>
+        <div><div class="label" data-en="Approach">Triết lý</div><div data-en="Human-first, quiet, close to nature">Vị nhân sinh, tinh giản, gần gũi thiên nhiên</div></div>
+        <div><div class="label" data-en="Tools">Công cụ</div><div class="tags"><span>Autodesk 3ds Max</span><span>Corona Renderer</span><span>Unreal Engine 5</span></div></div>
+        <div><div class="label" data-en="Clients">Khách hàng</div><div data-en="Restaurant & café chains, homeowners, developers, architecture firms">Chuỗi nhà hàng & cà phê, chủ nhà, chủ đầu tư, văn phòng kiến trúc</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact dark" id="contact">
+  <p class="label muted rv" style="margin-bottom:28px" data-en="(Start a project)">(Bắt đầu dự án)</p>
+  <h2 class="rv" data-en="Let’s shape your <em>next space.</em>">Cùng tạo nên <em>không gian tiếp theo.</em></h2>
+  <div class="foot label"><span>© 2026 Monoté Studio</span><span data-en="Architecture · Interior · Visualization">Kiến trúc · Nội thất · Diễn họa</span><a href="#top" data-en="Back to top ↑">Lên đầu trang ↑</a></div>
+  <div class="giant" aria-hidden="true">Monoté</div>
+</section>
+
+<!-- VIEWER -->
+<div id="viewer" role="dialog" aria-modal="true">
+  <div class="top">
+    <div class="meta"><h4 id="vTitle"></h4><p id="vSub"></p></div>
+    <button class="x label" id="vClose"><span data-en="Close">Đóng</span><i></i></button>
+  </div>
+  <div class="stage">
+    <img id="vImg" alt="">
+    <button class="nav-b prev" id="vPrev" aria-label="Previous">←</button>
+    <button class="nav-b next" id="vNext" aria-label="Next">→</button>
+  </div>
+  <div class="bot">
+    <div class="desc" id="vDesc"></div>
+    <div style="display:flex;gap:20px;align-items:center;max-width:100%">
+      <div class="thumbs" id="vThumbs"></div>
+      <span class="label" id="vCount" style="white-space:nowrap"></span>
+    </div>
+  </div>
+</div>
+<div id="vmodal"><button class="x label" id="mClose"><span data-en="Close">Đóng</span><i></i></button><video id="mVid" controls playsinline></video></div>
+
+<script>
+/* ================= DATA ================= */
+const F = (page, idx=[0,1,2,3]) => idx.map(i => `assets/img/fnb/p${page}-${i}.webp`);
+const A = list => list.map(n => `assets/img/arch/${n}.webp`);
+const SCOPE = {
+  facade:{vi:'Concept mặt tiền 3D · Concept không gian ngoài trời 3D · Hồ sơ trình bày · Giám sát tác giả', en:'Façade concept 3D · Outdoor space concept 3D · Presentation · Author supervision'},
+  dir:{vi:'Định hướng thiết kế · Concept nội & ngoại thất · Hồ sơ trình bày · Giám sát tác giả', en:'Design direction · Interior & exterior concept · Presentation · Author supervision'},
+  full:{vi:'Khảo sát hiện trạng · Phân khu chức năng · Concept · Diễn họa 3D', en:'Site survey · Zoning · Concept · 3D visualization'}
+};
+const CAT = {
+  restaurant:{vi:'Nhà hàng',en:'Restaurant'}, cafe:{vi:'Cà phê',en:'Café'}, beer:{vi:'Beer garden',en:'Beer garden'},
+  housing:{vi:'Nhà ở',en:'Residential'}, arch:{vi:'Kiến trúc',en:'Architecture'}
+};
+const PROJECTS = [
+  {id:'bean', cat:'cafe', name:'Bean Garden', loc:'Hòn Đất, Kiên Giang', area:'1.000+', scope:'full',
+   desc:{vi:'Dự án kinh doanh kết hợp nhà ở của gia chủ, diện tích hơn 1.000 m²: quán cà phê, ăn uống ngoài sân vườn và khu vui chơi dành riêng cho trẻ em — tất cả mang phong cách đậm nét Á Đông.',
+         en:'A hospitality-meets-home project on over 1,000 m²: a café, garden dining and a dedicated kids’ play area, all wrapped in a distinctly East-Asian character.'},
+   imgs:A(['p25-0','p25-1','p25-2','p25-3','p26-0','p26-1','p26-2','p27-0','p27-1','p28-0','p28-1','p29-0','p29-1','p29-2'])},
+  {id:'tc', cat:'cafe', name:'TC Coffee', loc:'', area:'', scope:'dir',
+   desc:{vi:'Cải tạo một căn nhà cho thuê thành quán cà phê phòng kính hiện đại, mang hơi hướng Tây Âu.',
+         en:'Turning a rental house into a modern glass-box café with a European mood.'},
+   imgs:A(['p33-0','p31-0','p32-0','p30-0'])},
+  {id:'arashiyama', cat:'restaurant', name:'Arashiyama Japanese Restaurant', loc:'Long Xuyên, An Giang', area:'2.000', scope:'facade', imgs:F('03')},
+  {id:'kokugyu', cat:'restaurant', name:'Kokugyu Japanese Restaurant', loc:'Quận 7, TP.HCM', area:'200', scope:'dir', imgs:F('04')},
+  {id:'tohoku', cat:'restaurant', name:'Tohoku Japanese Restaurant', loc:'Nghệ An', area:'750', scope:'facade', imgs:F('05')},
+  {id:'arashiyama2', cat:'restaurant', name:'Arashiyama Japanese Restaurant II', loc:'Kiên Giang', area:'2.000', scope:'facade', imgs:F('06')},
+  {id:'sushi', cat:'restaurant', name:'Sushi Cô Chủ Nhỏ', loc:'Quận 10, TP.HCM', area:'550', scope:'facade', imgs:F('07',[1,2,0])},
+  {id:'laubo', cat:'restaurant', name:'Lẩu Bò Nhà Gỗ', loc:'Quận 7 & Bình Tân, TP.HCM', area:'400 – 500', scope:'facade', imgs:F('08',[2,3,0])},
+  {id:'minhtam', cat:'restaurant', name:'Minh Tâm Restaurant', loc:'Kiên Giang', area:'850', scope:'facade', imgs:F('09',[1,3,2,0])},
+  {id:'mako', cat:'restaurant', name:'Mako Japanese Restaurant', loc:'Bình Tân, TP.HCM', area:'650', scope:'facade', imgs:F('10',[1,0,2,3])},
+  {id:'kingbbq', cat:'restaurant', name:'King BBQ Buffet — Sư Vạn Hạnh', loc:'TP.HCM', area:'240', scope:'dir', imgs:F('11',[1,2,3,0])},
+  {id:'hl1', cat:'cafe', name:'Highlands Coffee — 2B Phổ Quang', loc:'Tân Bình, TP.HCM', area:'350', scope:'dir', imgs:F('13',[1,0,2,3])},
+  {id:'hl2', cat:'cafe', name:'Highlands Coffee — Ecolake View', loc:'Hà Nội', area:'80', scope:'dir', imgs:F('14',[1,2,3,0])},
+  {id:'berry', cat:'cafe', name:'Berry Kids Cafe', loc:'Kiên Giang', area:'600', scope:'facade', imgs:F('15',[1,3,2,0])},
+  {id:'vanphat', cat:'cafe', name:'Vạn Phát Coffee', loc:'Cần Thơ', area:'350', scope:'dir', imgs:F('16',[3,2,0,1])},
+  {id:'mvh', cat:'cafe', name:'MVH Coffee', loc:'Thủ Đức, TP.HCM', area:'90', scope:'dir', imgs:F('17',[3,1,2,0])},
+  {id:'decube', cat:'cafe', name:'Dè Cube Coffee', loc:'Biên Hòa, Đồng Nai', area:'80', scope:'dir', imgs:F('18',[0,1,3,2])},
+  {id:'vietnhat', cat:'cafe', name:'Việt Nhật Coffee', loc:'Biên Hòa, Đồng Nai', area:'100', scope:'dir', imgs:F('19',[1,2,3,0])},
+  {id:'an', cat:'cafe', name:'An Coffee', loc:'Bình Dương', area:'150', scope:'dir', imgs:F('20',[1,2,3])},
+  {id:'mrdanh', cat:'cafe', name:'Mr. Danh Coffee', loc:'TP. Thủ Đức, TP.HCM', area:'200', scope:'dir', imgs:F('21',[1,2,3,0])},
+  {id:'jito', cat:'beer', name:'Jito Beer Garden', loc:'Thủ Đức, TP.HCM', area:'2.000', scope:'dir', imgs:F('23',[1,0,2,3])},
+  {id:'villa', cat:'housing', name:'Villa Trần Ngọc Diện, Thảo Điền', loc:'Thảo Điền, TP.HCM', area:'56', scope:'dir',
+   desc:{vi:'Bếp, phòng ăn và phòng ngủ cho một biệt thự ở Thảo Điền — tông gỗ sáng, gạch hoa và mái vòm mềm mại.',en:'Kitchen, dining room and bedroom for a Thao Dien villa — light timber, patterned tiles and soft arches.'},
+   imgs:[...F('26',[1,0,2,3]),...F('25'),...F('27')]},
+  {id:'nhavuon', cat:'arch', name:'Nhà vườn Quảng Ngãi', loc:'Quảng Ngãi', area:'', scope:'full',
+   desc:{vi:'Nhà vườn nghỉ dưỡng để gia chủ về thăm gia đình, vừa nghỉ ngơi vừa tiếp khách. Concept giản dị, hiện đại, gần gũi thiên nhiên — cảm hứng từ kiến trúc Nhật Bản, hòa cùng ngôi nhà hiện hữu.',
+         en:'A garden retreat for the owners’ visits home — a place to rest and to host. A simple, modern concept close to nature, inspired by Japanese architecture and in tune with the existing house.'},
+   imgs:A(['nv-op1','nv-op3','nv-cover'])}
+];
+const FEATURED = [
+  {id:'bean', cls:'c-a', cover:'assets/img/arch/p25-0.webp'},
+  {id:'arashiyama', cls:'c-b', cover:'assets/img/fnb/p03-2.webp'},
+  {id:'tc', cls:'c-c', cover:'assets/img/arch/p33-0.webp'},
+  {id:'villa', cls:'c-d', cover:'assets/img/fnb/p26-1.webp'},
+  {id:'jito', cls:'c-e', cover:'assets/img/fnb/p23-1.webp'},
+  {id:'tohoku', cls:'c-f', cover:'assets/img/fnb/p05-0.webp'}
+];
+const INTERIOR = Array.from({length:15},(_,i)=>`assets/img/interior/in-${String(i+1).padStart(2,'0')}.webp`);
+const VIZ = Array.from({length:63},(_,i)=>i+1).filter(n=>n!==39).map(n=>{
+  const s=String(n).padStart(2,'0'); return `assets/img/team/tm-${s}.${[36,41,42,54].includes(n)?'jpg':'webp'}`;});
+const SERVICES = [
+  {vi:['Định hướng thiết kế','Phân tích hiện trạng, nhu cầu chủ đầu tư và mô hình kinh doanh để chốt concept, phong cách và moodboard.'], en:['Design direction','Site analysis, brief and business model distilled into a concept, style and moodboard.']},
+  {vi:['Concept nội & ngoại thất','Mặt tiền, không gian ngoài trời, phân khu chức năng và bố trí nội thất — từ nhà hàng, cà phê đến nhà ở.'], en:['Interior & exterior concept','Façades, outdoor spaces, zoning and interior layouts — from restaurants and cafés to homes.']},
+  {vi:['Diễn họa 3D','Phối cảnh chất lượng cao bằng 3ds Max & Corona, ánh sáng và vật liệu chân thực.'], en:['3D visualization','High-end stills in 3ds Max & Corona with true-to-life light and materials.']},
+  {vi:['Phim kiến trúc','Animation và walkthrough thời gian thực với Unreal Engine 5 — phục vụ bán hàng và trình bày.'], en:['Architectural film','Animation and real-time walkthroughs in Unreal Engine 5 for sales and presentation.']},
+  {vi:['Hồ sơ & giám sát tác giả','Hồ sơ trình bày thuyết phục và đồng hành giám sát để công trình thi công đúng thiết kế.'], en:['Presentation & supervision','Persuasive presentation sets and author supervision so the build stays true to design.']}
+];
+const CLIENTS = ['Highlands Coffee','Arashiyama','Kokugyu','Tohoku','Mako','King BBQ','Jito Beer Garden','Bean Garden','Vạn Phát Coffee','Berry Kids Cafe','Lẩu Bò Nhà Gỗ','Sushi Cô Chủ Nhỏ'];
+
+/* ================= HELPERS ================= */
+let LANG = 'vi';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const byId = id => PROJECTS.find(p=>p.id===id);
+const t = o => o ? (o[LANG] ?? o.vi) : '';
+const meta = p => [t(CAT[p.cat]), p.loc, p.area ? p.area+' m²' : ''].filter(Boolean).join(' · ');
+
+/* ================= RENDER ================= */
+function renderMarquee(){
+  const html = CLIENTS.map(c=>`<span>${c}</span><span class="d">✦</span>`).join('');
+  $('#mq').innerHTML = html; $('#mq2').innerHTML = html;
+}
+function renderMosaic(){
+  $('#mosaic').innerHTML = FEATURED.map((f,i)=>{
+    const p = byId(f.id);
+    return `<article class="card ${f.cls} rv" data-id="${p.id}">
+      <div class="ri"><img src="${f.cover}" alt="${p.name}" loading="lazy" decoding="async"></div>
+      <div class="cap"><span class="n">${String(i+1).padStart(2,'0')}</span>
+        <div style="flex:1"><h3>${p.name}</h3><div class="m">${meta(p)}</div></div>
+        <span class="arrow">${LANG==='vi'?'Xem dự án':'View project'} →</span></div>
+    </article>`;}).join('');
+}
+let curFilter = 'all';
+function renderFilters(){
+  const cats = ['all','restaurant','cafe','beer','housing','arch'];
+  $('#filters').innerHTML = cats.map(c=>{
+    const n = c==='all' ? PROJECTS.length : PROJECTS.filter(p=>p.cat===c).length;
+    const label = c==='all' ? (LANG==='vi'?'Tất cả':'All') : t(CAT[c]);
+    return `<button data-f="${c}" class="${c===curFilter?'on':''}">${label}<sup>${n}</sup></button>`;}).join('');
+}
+function renderList(){
+  $('#list').innerHTML = PROJECTS.map((p,i)=>`
+    <div class="irow ${curFilter!=='all'&&p.cat!==curFilter?'gone':''}" data-id="${p.id}">
+      <span class="label muted">${String(i+1).padStart(2,'0')}</span>
+      <span class="nm">${p.name}</span>
+      <span class="sm cat">${t(CAT[p.cat])}</span>
+      <span class="sm loc${p.loc?'':' empty'}">${p.loc||'—'}</span>
+      <span class="sm area${p.area?'':' empty'}">${p.area?p.area+' m²':'—'}</span>
+      <span class="ar">→</span>
+    </div>`).join('');
+  const n = PROJECTS.filter(p=>curFilter==='all'||p.cat===curFilter).length;
+  $('#icount').textContent = `(${String(n).padStart(2,'0')})`;
+}
+function renderStrip(){
+  $('#strip').innerHTML = INTERIOR.map((s,i)=>`<figure data-i="${i}"><img src="${s}" alt="Interior ${i+1}" loading="lazy" decoding="async" draggable="false"><figcaption>${String(i+1).padStart(2,'0')} / ${INTERIOR.length}</figcaption></figure>`).join('');
+}
+let vizShown = 24;
+function renderViz(){
+  $('#masonry').innerHTML = VIZ.map((s,i)=>`<figure class="${i>=vizShown?'hidden':''}" data-i="${i}"><div class="ri"><img src="${s}" alt="Visualization ${i+1}" loading="lazy" decoding="async"></div></figure>`).join('');
+  updateMore();
+}
+function updateMore(){
+  const left = VIZ.length - vizShown;
+  $('#moreN').textContent = left>0 ? `(${left})` : '';
+  $('#moreBtn').parentElement.style.display = left>0 ? '' : 'none';
+}
+function renderServices(){
+  $('#srows').innerHTML = SERVICES.map((s,i)=>`<div class="srow rv"><span class="label muted">${String(i+1).padStart(2,'0')}</span><h3>${s[LANG][0]}</h3><p>${s[LANG][1]}</p></div>`).join('');
+}
+
+/* ================= STATEMENT WORD REVEAL ================= */
+function splitStatement(){
+  const el = $('#stmt');
+  el.innerHTML = el.textContent.split(/\s+/).map(w=>`<span class="w">${w}</span>`).join(' ');
+  onScrollStmt();
+}
+function onScrollStmt(){
+  const el = $('#stmt'); if(!el) return;
+  const r = el.getBoundingClientRect(), vh = innerHeight;
+  const prog = Math.min(1, Math.max(0, (vh*0.85 - r.top) / (r.height + vh*0.35)));
+  const ws = el.querySelectorAll('.w'), on = Math.round(prog*ws.length);
+  ws.forEach((w,i)=>w.classList.toggle('on', i<on));
+}
+
+/* ================= OBSERVERS ================= */
+let io;
+function observe(){
+  io = io || new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);
+      e.target.querySelectorAll?.('.ri').forEach(r=>r.classList.add('in')); }
+  }),{rootMargin:'0px 0px -8% 0px', threshold:.08});
+  $$('.rv:not(.in), .ri:not(.in)').forEach(el=>io.observe(el));
+}
+function countUp(){
+  const ob = new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting) return; ob.unobserve(e.target);
+    const b = e.target, n = +b.dataset.n, sup = b.querySelector('sup').outerHTML, t0 = performance.now();
+    const fmt = v => v>=1000 ? v.toLocaleString('vi-VN') : v;
+    (function step(now){ const k = Math.min(1,(now-t0)/1600), v = Math.round(n*(1-Math.pow(1-k,3)));
+      b.innerHTML = fmt(v)+sup; if(k<1) requestAnimationFrame(step); })(t0);
+  }),{threshold:.6});
+  $$('.stats b').forEach(b=>ob.observe(b));
+}
+
+/* ================= VIEWER ================= */
+const V = {list:[], i:0, title:'', sub:'', desc:''};
+function openViewer(list, i, title, sub, desc){
+  Object.assign(V,{list, i, title, sub, desc});
+  $('#vTitle').textContent = title; $('#vSub').textContent = sub; $('#vDesc').textContent = desc||'';
+  $('#vThumbs').innerHTML = list.length>1 ? list.map((s,k)=>`<button data-k="${k}"><img src="${s}" alt="" loading="lazy"></button>`).join('') : '';
+  showV(i); $('#viewer').classList.add('open'); document.body.classList.add('lock');
+}
+function showV(i){
+  V.i = (i+V.list.length)%V.list.length;
+  const img = $('#vImg'); img.classList.remove('on');
+  const src = V.list[V.i], pre = new Image();
+  pre.onload = () => { img.src = src; requestAnimationFrame(()=>img.classList.add('on')); };
+  pre.src = src;
+  $('#vCount').textContent = `${String(V.i+1).padStart(2,'0')} / ${String(V.list.length).padStart(2,'0')}`;
+  $$('#vThumbs button').forEach((b,k)=>b.classList.toggle('on',k===V.i));
+  $('#vThumbs button.on')?.scrollIntoView({block:'nearest',inline:'center'});
+  const show = V.list.length>1; $('#vPrev').style.display = $('#vNext').style.display = show?'':'none';
+}
+function closeViewer(){ $('#viewer').classList.remove('open'); document.body.classList.remove('lock'); }
+function openProject(id){
+  const p = byId(id);
+  openViewer(p.imgs, 0, p.name, meta(p), [t(p.desc), t(SCOPE[p.scope])].filter(Boolean).join('  —  '));
+}
+
+/* ================= VIDEO MODAL ================= */
+function openVideo(src){
+  const v = $('#mVid'); v.src = src; $('#vmodal').classList.add('open'); document.body.classList.add('lock');
+  $('#heroVid').pause(); v.play().catch(()=>{});
+}
+function closeVideo(){
+  const v = $('#mVid'); v.pause(); v.removeAttribute('src'); v.load();
+  $('#vmodal').classList.remove('open'); document.body.classList.remove('lock'); $('#heroVid').play().catch(()=>{});
+}
+
+/* ================= I18N ================= */
+function setLang(l){
+  LANG = l; document.documentElement.lang = l;
+  $$('[data-en]').forEach(el=>{ if(!el.dataset.vi) el.dataset.vi = el.innerHTML; el.innerHTML = l==='en' ? el.dataset.en : el.dataset.vi; });
+  $$('.lang button').forEach(b=>b.classList.toggle('on', b.dataset.l===l));
+  renderMosaic(); renderFilters(); renderList(); renderServices(); splitStatement(); observe();
+  $$('#mosaic .rv, #srows .rv').forEach(el=>{ if(el.getBoundingClientRect().top < innerHeight) { el.classList.add('in'); el.querySelectorAll('.ri').forEach(r=>r.classList.add('in')); } });
+  try{ localStorage.setItem('lang', l); }catch(e){}
+}
+
+/* ================= EVENTS ================= */
+document.addEventListener('click', e=>{
+  const card = e.target.closest('.card, .irow'); if(card){ openProject(card.dataset.id); return; }
+  const f = e.target.closest('#filters button');
+  if(f){ curFilter = f.dataset.f; renderFilters(); renderList(); return; }
+  const vid = e.target.closest('[data-video]'); if(vid){ openVideo(vid.dataset.video); return; }
+  const fig = e.target.closest('#masonry figure');
+  if(fig){ openViewer(VIZ, +fig.dataset.i, LANG==='vi'?'Diễn họa kiến trúc':'Architectural visualization', 'Monoté Studio · 3ds Max · Corona', ''); return; }
+  const sf = e.target.closest('#strip figure');
+  if(sf && !stripMoved){ openViewer(INTERIOR, +sf.dataset.i, LANG==='vi'?'Thiết kế nội thất':'Interior design', 'Monoté Studio · 3ds Max · Corona', ''); return; }
+  const th = e.target.closest('#vThumbs button'); if(th){ showV(+th.dataset.k); return; }
+  const lb = e.target.closest('.lang button'); if(lb){ setLang(lb.dataset.l); return; }
+});
+$('#vClose').onclick = closeViewer; $('#vPrev').onclick = ()=>showV(V.i-1); $('#vNext').onclick = ()=>showV(V.i+1);
+$('#viewer .stage').addEventListener('click', e=>{ if(e.target.classList.contains('stage')) closeViewer(); });
+$('#mClose').onclick = closeVideo;
+document.addEventListener('keydown', e=>{
+  if($('#vmodal').classList.contains('open')){ if(e.key==='Escape') closeVideo(); return; }
+  if(!$('#viewer').classList.contains('open')) return;
+  if(e.key==='Escape') closeViewer(); if(e.key==='ArrowRight') showV(V.i+1); if(e.key==='ArrowLeft') showV(V.i-1);
+});
+let tx=0; $('#viewer').addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+$('#viewer').addEventListener('touchend',e=>{ const d=e.changedTouches[0].clientX-tx; if(Math.abs(d)>50) showV(V.i+(d<0?1:-1)); });
+
+$('#moreBtn').onclick = ()=>{ vizShown += 24; $$('#masonry figure').forEach((f,i)=>f.classList.toggle('hidden', i>=vizShown)); updateMore(); observe(); };
+
+/* hover-to-play reels */
+$$('.vcard').forEach(c=>{ const v=c.querySelector('video');
+  c.addEventListener('mouseenter',()=>{ v.preload='auto'; v.play().catch(()=>{}); });
+  c.addEventListener('mouseleave',()=>v.pause()); });
+
+/* index hover preview */
+const peek = $('#peek'), pimgs = peek.querySelectorAll('img'); let pk=0, px=0, py=0, cx=0, cy=0, lastId=null;
+$('#list').addEventListener('mouseover', e=>{
+  const r = e.target.closest('.irow'); if(!r) return;
+  $('#list').classList.add('dim'); peek.classList.add('on');
+  if(r.dataset.id!==lastId){ lastId=r.dataset.id; const p=byId(lastId);
+    pk^=1; pimgs[pk].src = p.imgs[0]; pimgs[pk].style.opacity=1; pimgs[pk^1].style.opacity=0; pimgs[pk].style.zIndex=2; pimgs[pk^1].style.zIndex=1; }
+});
+$('#list').addEventListener('mouseleave', ()=>{ $('#list').classList.remove('dim'); peek.classList.remove('on'); lastId=null; });
+addEventListener('mousemove', e=>{ px=e.clientX; py=e.clientY; });
+(function loop(){ cx += (px-cx)*.14; cy += (py-cy)*.14; peek.style.left = cx+'px'; peek.style.top = cy+'px'; requestAnimationFrame(loop); })();
+pimgs.forEach(i=>i.style.transition='opacity .4s');
+
+/* interior strip drag + progress */
+const strip = $('#strip'); let down=false, sx=0, sl=0, stripMoved=false;
+strip.addEventListener('mousedown', e=>{ down=true; stripMoved=false; sx=e.pageX; sl=strip.scrollLeft; });
+addEventListener('mouseup', ()=>{ down=false; strip.classList.remove('drag'); });
+strip.addEventListener('mousemove', e=>{ if(!down) return; const d=e.pageX-sx; if(Math.abs(d)>5){ stripMoved=true; strip.classList.add('drag'); } strip.scrollLeft = sl-d; });
+const stepW = () => strip.clientWidth*0.6;
+$('#sPrev').onclick = ()=>strip.scrollBy({left:-stepW(),behavior:'smooth'});
+$('#sNext').onclick = ()=>strip.scrollBy({left:stepW(),behavior:'smooth'});
+strip.addEventListener('scroll', ()=>{ const m=strip.scrollWidth-strip.clientWidth, w=strip.clientWidth/strip.scrollWidth;
+  $('#sbar').style.width = (w*100)+'%'; $('#sbar').style.left = (m? strip.scrollLeft/m*(1-w)*100 : 0)+'%'; });
+
+/* nav hide on scroll down */
+let lastY=0;
+addEventListener('scroll', ()=>{ const y=scrollY; $('#nav').classList.toggle('hide', y>lastY && y>200 && !$('#mnav').classList.contains('open')); lastY=y; onScrollStmt(); }, {passive:true});
+$('#menuBtn').onclick = ()=>{ const o=$('#mnav').classList.toggle('open'); $('#menuBtn').textContent = o?(LANG==='vi'?'Đóng':'Close'):'Menu'; };
+$$('#mnav a').forEach(a=>a.onclick=()=>{ $('#mnav').classList.remove('open'); $('#menuBtn').textContent='Menu'; });
+
+/* ================= BOOT ================= */
+renderMarquee(); renderStrip(); renderViz();
+let saved='vi'; try{ saved = localStorage.getItem('lang')||'vi'; }catch(e){}
+setLang(saved); countUp(); observe();
+strip.dispatchEvent(new Event('scroll'));
+
+(function preload(){
+  const pct = $('#pct'), t0 = performance.now(); let done=false;
+  const finish = ()=>{ if(done) return; done=true; pct.textContent='100';
+    setTimeout(()=>{ $('#loader').classList.add('done'); document.body.classList.add('ready'); }, 250); };
+  (function tick(now){ if(done) return; const k=Math.min(.95,(now-t0)/1800); pct.textContent = Math.round(k*100); requestAnimationFrame(tick); })(t0);
+  const hv = $('#heroVid');
+  Promise.race([ new Promise(r=>{ if(hv.readyState>=3) r(); hv.addEventListener('canplay',r,{once:true}); }), new Promise(r=>setTimeout(r,2600)) ])
+    .then(()=>setTimeout(finish, Math.max(0, 1500-(performance.now()-t0))));
+})();
+</script>
+</body>
+</html>
