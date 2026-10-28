@@ -174,6 +174,7 @@ section{position:relative}
 .vcard h3{font-family:var(--serif);font-weight:400;text-transform:uppercase;letter-spacing:.22em;font-size:clamp(15px,1.3vw,19px)}
 .v-wide .vb{aspect-ratio:16/9}
 .v-tall .vb{aspect-ratio:9/16}
+.v-full{grid-column:1/-1;margin-top:clamp(28px,4vw,56px)}
 .dark .lead{max-width:56ch;margin:-30px 0 clamp(40px,6vw,80px);color:var(--dmute)}
 
 /* ---------- interior strip ---------- */
@@ -399,7 +400,7 @@ section{position:relative}
 <section class="reels dark" id="reels">
   <div class="sh rv">
     <h2>Showreel <em data-en="& films">& phim</em></h2>
-    <div class="side label muted"><span>(02)</span></div>
+    <div class="side label muted"><span>(03)</span></div>
   </div>
   <p class="lead rv" data-en="Architectural animation tells what a still image cannot — light shifting across a garden, the rhythm of walking through a room. Hover to preview, click to watch with sound.">Phim diễn họa kể điều mà ảnh tĩnh không nói hết — ánh sáng chuyển động trong khu vườn, nhịp bước đi qua một căn phòng. Rê chuột để xem trước, bấm để xem kèm âm thanh.</p>
   <div class="reel-grid">
@@ -410,6 +411,10 @@ section{position:relative}
     <div class="vcard v-tall rv" data-video="assets/video/ue5-living-kitchen.mp4">
       <div class="vb"><video src="assets/video/ue5-living-kitchen.mp4" poster="assets/video/ue5-living-kitchen.jpg" muted loop playsinline preload="none"></video><span class="pl label" data-en="Play">Xem</span></div>
       <div class="cap"><div><h3 data-en="Living · Kitchen">Living · Kitchen</h3><div class="muted label" style="margin-top:6px">Unreal Engine 5 · Lumen</div></div><span class="label muted">0:41 · 9:16</span></div>
+    </div>
+    <div class="vcard v-wide v-full rv" data-video="assets/video/woong.mp4">
+      <div class="vb"><video src="assets/video/woong.mp4#t=18" poster="assets/video/woong.jpg" muted loop playsinline preload="none"></video><span class="pl label" data-en="Play">Xem</span></div>
+      <div class="cap"><div><h3>Woong</h3><div class="muted label" style="margin-top:6px" data-en="Apartment interior film">Phim nội thất căn hộ</div></div><span class="label muted">2:39 · 1080p</span></div>
     </div>
   </div>
 </section>
