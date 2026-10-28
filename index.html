@@ -181,10 +181,11 @@ section{position:relative}
 .interior .sh,.interior .intro{margin-left:var(--pad);margin-right:var(--pad)}
 .intro{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:clamp(30px,4vw,56px)}
 .intro p{max-width:52ch}
-.strip{display:flex;gap:clamp(10px,1.2vw,18px);overflow-x:auto;scroll-snap-type:x mandatory;padding:0 var(--pad) 20px;scrollbar-width:none;cursor:grab}
+.strip{display:flex;gap:clamp(10px,1.2vw,18px);overflow-x:auto;overscroll-behavior-x:contain;padding:0 var(--pad) 20px;scrollbar-width:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .strip::-webkit-scrollbar{display:none}
-.strip.drag{cursor:grabbing;scroll-snap-type:none}
-.strip figure{flex:0 0 auto;height:min(72vh,720px);scroll-snap-align:start;position:relative;overflow:hidden;background:var(--bg2)}
+.strip.drag{cursor:grabbing}
+.strip.drag figure{pointer-events:none}
+.strip figure{flex:0 0 auto;height:min(72vh,720px);position:relative;overflow:hidden;background:var(--bg2)}
 .strip img{height:100%;width:auto;object-fit:cover;transition:transform 1.4s var(--ease);user-select:none;-webkit-user-drag:none}
 .strip figure:hover img{transform:scale(1.03)}
 .strip figcaption{position:absolute;left:14px;bottom:12px;color:#fff;font-size:11px;letter-spacing:.16em;text-shadow:0 1px 8px rgba(0,0,0,.4)}
@@ -473,7 +474,7 @@ section{position:relative}
     <div class="side label muted"><span>Monoté</span></div>
   </div>
   <div class="sgrid">
-    <div class="ri rv"><img src="assets/img/fnb/p05-2.webp" alt="Tohoku Japanese Restaurant" loading="lazy"></div>
+    <div class="ri rv"><img src="assets/img/fnb/p17-3.webp" alt="MVH Coffee" loading="lazy"></div>
     <div>
       <blockquote class="rv" data-en="“Every project — residential, F&B or artistic — is a rare chance to learn. We want each concept, each function and each detail to reach <em>the most complete version</em> of itself.”">“Mỗi dự án — dân dụng, F&B hay nghệ thuật — là một cơ hội quý để học hỏi. Chúng tôi mong từng khái niệm, công năng và chi tiết đều chạm tới <em>sự hoàn thiện nhất</em> có thể.”</blockquote>
       <div class="sig rv"><b>Monoté Studio</b></div>
@@ -538,25 +539,19 @@ const PROJECTS = [
    desc:{vi:'Cải tạo một căn nhà cho thuê thành quán cà phê phòng kính hiện đại, mang hơi hướng Tây Âu.',
          en:'Turning a rental house into a modern glass-box café with a European mood.'},
    imgs:A(['p33-0','p31-0','p32-0','p30-0'])},
-  {id:'arashiyama', cat:'restaurant', name:'Arashiyama Japanese Restaurant', loc:'Long Xuyên, An Giang', area:'2.000', scope:'facade', imgs:F('03')},
-  {id:'kokugyu', cat:'restaurant', name:'Kokugyu Japanese Restaurant', loc:'Quận 7, TP.HCM', area:'200', scope:'dir', imgs:F('04')},
-  {id:'tohoku', cat:'restaurant', name:'Tohoku Japanese Restaurant', loc:'Nghệ An', area:'750', scope:'facade', imgs:F('05')},
-  {id:'arashiyama2', cat:'restaurant', name:'Arashiyama Japanese Restaurant II', loc:'Kiên Giang', area:'2.000', scope:'facade', imgs:F('06')},
-  {id:'sushi', cat:'restaurant', name:'Sushi Cô Chủ Nhỏ', loc:'Quận 10, TP.HCM', area:'550', scope:'facade', imgs:F('07',[1,2,0])},
-  {id:'laubo', cat:'restaurant', name:'Lẩu Bò Nhà Gỗ', loc:'Quận 7 & Bình Tân, TP.HCM', area:'400 – 500', scope:'facade', imgs:F('08',[2,3,0])},
+  {id:'arashiyama2', cat:'restaurant', name:'Arashiyama Japanese Restaurant', loc:'Kiên Giang', area:'2.000', scope:'facade', imgs:F('06')},
+  {id:'laubo', cat:'restaurant', name:'Lẩu Bò Nhà Gỗ', loc:'Quận 7 & Bình Tân, TP.HCM', area:'400 – 500', scope:'facade', imgs:F('08',[0])},
   {id:'minhtam', cat:'restaurant', name:'Minh Tâm Restaurant', loc:'Kiên Giang', area:'850', scope:'facade', imgs:F('09',[1,3,2,0])},
-  {id:'mako', cat:'restaurant', name:'Mako Japanese Restaurant', loc:'Bình Tân, TP.HCM', area:'650', scope:'facade', imgs:F('10',[1,0,2,3])},
-  {id:'kingbbq', cat:'restaurant', name:'King BBQ Buffet — Sư Vạn Hạnh', loc:'TP.HCM', area:'240', scope:'dir', imgs:F('11',[1,2,3,0])},
+  {id:'mako', cat:'restaurant', name:'Mako Japanese Restaurant', loc:'Bình Tân, TP.HCM', area:'650', scope:'facade', imgs:F('10',[0])},
   {id:'hl1', cat:'cafe', name:'Highlands Coffee — 2B Phổ Quang', loc:'Tân Bình, TP.HCM', area:'350', scope:'dir', imgs:F('13',[1,0,2,3])},
   {id:'hl2', cat:'cafe', name:'Highlands Coffee — Ecolake View', loc:'Hà Nội', area:'80', scope:'dir', imgs:F('14',[1,2,3,0])},
-  {id:'berry', cat:'cafe', name:'Berry Kids Cafe', loc:'Kiên Giang', area:'600', scope:'facade', imgs:F('15',[1,3,2,0])},
-  {id:'vanphat', cat:'cafe', name:'Vạn Phát Coffee', loc:'Cần Thơ', area:'350', scope:'dir', imgs:F('16',[3,2,0,1])},
+  {id:'berry', cat:'cafe', name:'Berry Kids Cafe', loc:'Kiên Giang', area:'600', scope:'facade', imgs:F('15',[2])},
+  {id:'vanphat', cat:'cafe', name:'Vạn Phát Coffee', loc:'Cần Thơ', area:'350', scope:'dir', imgs:F('16',[2])},
   {id:'mvh', cat:'cafe', name:'MVH Coffee', loc:'Thủ Đức, TP.HCM', area:'90', scope:'dir', imgs:F('17',[3,1,2,0])},
   {id:'decube', cat:'cafe', name:'Dè Cube Coffee', loc:'Biên Hòa, Đồng Nai', area:'80', scope:'dir', imgs:F('18',[0,1,3,2])},
   {id:'vietnhat', cat:'cafe', name:'Việt Nhật Coffee', loc:'Biên Hòa, Đồng Nai', area:'100', scope:'dir', imgs:F('19',[1,2,3,0])},
   {id:'an', cat:'cafe', name:'An Coffee', loc:'Bình Dương', area:'150', scope:'dir', imgs:F('20',[1,2,3])},
   {id:'mrdanh', cat:'cafe', name:'Mr. Danh Coffee', loc:'TP. Thủ Đức, TP.HCM', area:'200', scope:'dir', imgs:F('21',[1,2,3,0])},
-  {id:'jito', cat:'beer', name:'Jito Beer Garden', loc:'Thủ Đức, TP.HCM', area:'2.000', scope:'dir', imgs:F('23',[1,0,2,3])},
   {id:'villa', cat:'housing', name:'Villa Trần Ngọc Diện, Thảo Điền', loc:'Thảo Điền, TP.HCM', area:'56', scope:'dir',
    desc:{vi:'Bếp, phòng ăn và phòng ngủ cho một biệt thự ở Thảo Điền — tông gỗ sáng, gạch hoa và mái vòm mềm mại.',en:'Kitchen, dining room and bedroom for a Thao Dien villa — light timber, patterned tiles and soft arches.'},
    imgs:[...F('26',[1,0,2,3]),...F('25'),...F('27')]},
@@ -567,11 +562,11 @@ const PROJECTS = [
 ];
 const FEATURED = [
   {id:'bean', cls:'c-a', cover:'assets/img/arch/p25-0.webp'},
-  {id:'arashiyama', cls:'c-b', cover:'assets/img/fnb/p03-2.webp'},
+  {id:'arashiyama2', cls:'c-b', cover:'assets/img/fnb/p06-3.webp'},
   {id:'tc', cls:'c-c', cover:'assets/img/arch/p33-0.webp'},
   {id:'villa', cls:'c-d', cover:'assets/img/fnb/p26-1.webp'},
-  {id:'jito', cls:'c-e', cover:'assets/img/fnb/p23-1.webp'},
-  {id:'tohoku', cls:'c-f', cover:'assets/img/fnb/p05-0.webp'}
+  {id:'mrdanh', cls:'c-e', cover:'assets/img/fnb/p21-1.webp'},
+  {id:'minhtam', cls:'c-f', cover:'assets/img/fnb/p09-1.webp'}
 ];
 const INTERIOR = Array.from({length:15},(_,i)=>`assets/img/interior/in-${String(i+1).padStart(2,'0')}.webp`);
 const VIZ = Array.from({length:63},(_,i)=>i+1).filter(n=>n!==39).map(n=>{
@@ -585,7 +580,7 @@ const SERVICES = [
 ];
 const DIMS = {"tm-01.webp":[1400,872],"tm-02.webp":[1400,2100],"tm-03.webp":[1400,1474],"tm-04.webp":[1400,1739],"tm-05.webp":[1400,2100],"tm-06.webp":[1400,1015],"tm-07.webp":[1400,1361],"tm-08.webp":[1400,840],"tm-09.webp":[1400,840],"tm-10.webp":[1400,934],"tm-11.webp":[1400,1868],"tm-12.webp":[1400,1903],"tm-13.webp":[1400,934],"tm-14.webp":[1400,584],"tm-15.webp":[1400,934],"tm-16.webp":[1400,700],"tm-17.webp":[1400,747],"tm-18.webp":[1400,1050],"tm-19.webp":[1400,1556],"tm-20.webp":[790,1000],"tm-21.webp":[1400,677],"tm-22.webp":[1400,942],"tm-23.webp":[1400,1050],"tm-24.webp":[1400,662],"tm-25.webp":[1400,1867],"tm-26.webp":[1400,989],"tm-27.webp":[1400,989],"tm-28.webp":[1400,1400],"tm-29.webp":[1400,1680],"tm-30.webp":[1400,789],"tm-31.webp":[1400,882],"tm-32.webp":[1400,1818],"tm-33.webp":[1400,1628],"tm-34.webp":[1400,700],"tm-35.webp":[1400,788],"tm-36.jpg":[1200,781],"tm-37.webp":[1400,788],"tm-38.webp":[1400,788],"tm-39.jpg":[1200,781],"tm-40.webp":[1200,901],"tm-41.jpg":[1200,800],"tm-42.jpg":[1200,532],"tm-43.webp":[1400,933],"tm-44.webp":[1400,788],"tm-45.webp":[1400,788],"tm-46.webp":[1400,911],"tm-47.webp":[1400,788],"tm-48.webp":[1400,934],"tm-49.webp":[1400,1400],"tm-50.webp":[1400,1273],"tm-51.webp":[1400,1270],"tm-52.webp":[1400,2208],"tm-53.webp":[1400,1750],"tm-54.jpg":[1200,847],"tm-55.webp":[1400,2115],"tm-56.webp":[1400,991],"tm-57.webp":[1400,1740],"tm-58.webp":[1400,1896],"tm-59.webp":[1400,1400],"tm-60.webp":[1400,991],"tm-61.webp":[1400,788],"tm-62.webp":[1400,788],"tm-63.webp":[1400,788],"in-01.webp":[1400,933],"in-02.webp":[1400,1750],"in-03.webp":[1400,1750],"in-04.webp":[1400,1750],"in-05.webp":[1400,1050],"in-06.webp":[1400,1050],"in-07.webp":[1400,1736],"in-08.webp":[1400,1166],"in-09.webp":[1400,1166],"in-10.webp":[1400,1166],"in-11.webp":[1000,667],"in-12.webp":[1008,982],"in-13.webp":[973,984],"in-14.webp":[1008,983],"in-15.webp":[975,984]};
 const wh = src => { const d = DIMS[src.split('/').pop()] || [4,3]; return `width="${d[0]}" height="${d[1]}" style="aspect-ratio:${d[0]}/${d[1]}"`; };
-const CLIENTS = ['Highlands Coffee','Arashiyama','Kokugyu','Tohoku','Mako','King BBQ','Jito Beer Garden','Bean Garden','Vạn Phát Coffee','Berry Kids Cafe','Lẩu Bò Nhà Gỗ','Sushi Cô Chủ Nhỏ'];
+const CLIENTS = ['Highlands Coffee','Arashiyama','Minh Tâm Restaurant','Mako','Mr. Danh Coffee','Bean Garden','Vạn Phát Coffee','Berry Kids Cafe','Lẩu Bò Nhà Gỗ','Việt Nhật Coffee','MVH Coffee','Dè Cube Coffee'];
 
 /* ================= HELPERS ================= */
 let LANG = 'vi';
@@ -611,7 +606,7 @@ function renderMosaic(){
 }
 let curFilter = 'all';
 function renderFilters(){
-  const cats = ['all','restaurant','cafe','beer','housing','arch'];
+  const cats = ['all','restaurant','cafe','housing','arch'];
   $('#filters').innerHTML = cats.map(c=>{
     const n = c==='all' ? PROJECTS.length : PROJECTS.filter(p=>p.cat===c).length;
     const label = c==='all' ? (LANG==='vi'?'Tất cả':'All') : t(CAT[c]);
@@ -771,13 +766,26 @@ addEventListener('mousemove', e=>{ px=e.clientX; py=e.clientY; });
 pimgs.forEach(i=>i.style.transition='opacity .4s');
 
 /* interior strip drag + progress */
-const strip = $('#strip'); let down=false, sx=0, sl=0, stripMoved=false;
-strip.addEventListener('mousedown', e=>{ down=true; stripMoved=false; sx=e.pageX; sl=strip.scrollLeft; });
-addEventListener('mouseup', ()=>{ down=false; strip.classList.remove('drag'); });
-strip.addEventListener('mousemove', e=>{ if(!down) return; const d=e.pageX-sx; if(Math.abs(d)>5){ stripMoved=true; strip.classList.add('drag'); } strip.scrollLeft = sl-d; });
-const stepW = () => strip.clientWidth*0.6;
-$('#sPrev').onclick = ()=>strip.scrollBy({left:-stepW(),behavior:'smooth'});
-$('#sNext').onclick = ()=>strip.scrollBy({left:stepW(),behavior:'smooth'});
+const strip = $('#strip'); let stripMoved=false;
+{
+  let down=false, sx=0, sl=0, target=0, vel=0, lastX=0, lastT=0, raf=0, ease=.1;
+  const clampX = v => Math.max(0, Math.min(strip.scrollWidth-strip.clientWidth, v));
+  const glide = () => { const cur=strip.scrollLeft, d=target-cur;
+    if(Math.abs(d)<.5){ strip.scrollLeft=target; raf=0; return; }
+    strip.scrollLeft = cur + d*ease; raf=requestAnimationFrame(glide); };
+  const go = (x, k) => { target=clampX(x); ease=k; if(!raf) raf=requestAnimationFrame(glide); };
+  strip.addEventListener('pointerdown', e=>{ if(e.pointerType!=='mouse' || e.button!==0) return; e.preventDefault();
+    down=true; stripMoved=false; sx=lastX=e.clientX; lastT=e.timeStamp; sl=target=strip.scrollLeft; vel=0; });
+  addEventListener('pointermove', e=>{ if(!down) return; const d=e.clientX-sx;
+    if(!stripMoved){ if(Math.abs(d)<=5) return; stripMoved=true; strip.classList.add('drag'); }
+    const dt=Math.max(1, e.timeStamp-lastT); vel = vel*.7 + (e.clientX-lastX)/dt*.3; lastX=e.clientX; lastT=e.timeStamp;
+    go(sl-d, .35); });
+  addEventListener('pointerup', e=>{ if(!down) return; down=false; strip.classList.remove('drag');
+    if(stripMoved){ if(e.timeStamp-lastT>90) vel=0; const lim=strip.clientWidth*.7; go(target - Math.max(-lim, Math.min(lim, vel*380)), .075); } });
+  const stepW = () => strip.clientWidth*0.6;
+  $('#sPrev').onclick = ()=>go((raf?target:strip.scrollLeft)-stepW(), .09);
+  $('#sNext').onclick = ()=>go((raf?target:strip.scrollLeft)+stepW(), .09);
+}
 strip.addEventListener('scroll', ()=>{ const m=strip.scrollWidth-strip.clientWidth, w=strip.clientWidth/strip.scrollWidth;
   $('#sbar').style.width = (w*100)+'%'; $('#sbar').style.left = (m? strip.scrollLeft/m*(1-w)*100 : 0)+'%'; });
 
